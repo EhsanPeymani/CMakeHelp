@@ -1,0 +1,44 @@
+cmake_minimum_required(VERSION 3.10)
+
+# set(PROJECT_NAME "Project1")
+
+# set the project name
+project(Project1 VERSION 1.3)
+
+# IMPORTANT: definition of the option param comes in configure_file
+# therefore it must be before configure_file
+option(USE_OPTIONAL_LIB "Use optional libraries" ON)
+
+# configure a header file to pass some of the CMake settings
+# to the source code
+configure_file(ProjectConfig.h.in ProjectConfig.h)
+
+# specify the C++ standard
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# add the MathFunctions library
+add_subdirectory(src/MathFunctions)
+
+if (USE_OPTIONAL_LIB)
+    add_subdirectory(src/OptionalFunctions)
+    list(APPEND EXTRA_LIBS OptionalFunctions)
+    list(APPEND EXTRA_INCLUDES "${PROJECT_SOURCE_DIR}/src/OptionalFunctions")
+endif()
+
+# add the executable
+add_executable(test1 src/test1.cpp)
+target_link_libraries(test1 PUBLIC MathFunctions)
+target_link_libraries(test1 PUBLIC ${EXTRA_LIBS})
+
+# add the binary tree to the search path for include files
+# so that we will find ProjectConfig.h
+target_include_directories(test1 PUBLIC 
+                            "${PROJECT_BINARY_DIR}"
+                            "${PROJECT_SOURCE_DIR}/src/MathFunctions"
+                            ${EXTRA_INCLUDES}
+                            )
+
+message(STATUS "PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}")
+message(STATUS "PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
+message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")

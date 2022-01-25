@@ -1,0 +1,5 @@
+// the configured options and settings for Tutorial
+#define Project1_VERSION_MAJOR @Project1_VERSION_MAJOR@
+#define Project1_VERSION_MINOR @Project1_VERSION_MINOR@
+
+#cmakedefine USE_OPTIONAL_LIB
